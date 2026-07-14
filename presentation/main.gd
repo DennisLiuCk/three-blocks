@@ -215,6 +215,7 @@ func _on_round_resolved(result: Dictionary) -> void:
 		_land_block_on_tower(option)
 	else:
 		_tilt_tower(session.state.fails)
+	score_label.text = str(session.state.score)
 
 	if session.state.fails > GameRules.MAX_FAILS:
 		_collapse_tower()
