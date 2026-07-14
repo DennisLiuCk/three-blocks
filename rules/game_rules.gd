@@ -2,6 +2,7 @@ class_name GameRules
 extends RefCounted
 
 const TOTAL_ROUNDS := 5
+const MAX_FAILS := 2
 const INFLUENCE_STRENGTH := 0.35
 
 

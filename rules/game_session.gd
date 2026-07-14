@@ -3,7 +3,7 @@ extends RefCounted
 
 signal round_ready(round_index: int, options: Array)
 signal round_resolved(result: Dictionary)
-signal run_ended(final_score: int, history: Array)
+signal run_ended(final_score: int, history: Array, survived: bool)
 
 var rules := GameRules.new()
 var state := RunState.new()
@@ -23,15 +23,20 @@ func choose(option: RoundOption, influence: float) -> void:
 	state.history.append(result)
 	if result["success"]:
 		state.score += int(result["score_delta"])
+	else:
+		state.fails += 1
 	round_resolved.emit(result)
 
 
 # Presentation calls this once its feedback animation finishes, so round
 # pacing stays a view concern instead of a rules concern.
 func advance() -> void:
+	if state.fails > GameRules.MAX_FAILS:
+		run_ended.emit(state.score, state.history, false)
+		return
 	state.round_index += 1
 	if state.round_index > GameRules.TOTAL_ROUNDS:
-		run_ended.emit(state.score, state.history)
+		run_ended.emit(state.score, state.history, true)
 	else:
 		_announce_round()
 
